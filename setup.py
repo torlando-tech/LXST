@@ -9,6 +9,12 @@ else:                                   BUILD_EXTENSIONS = True
 if os.name == "nt":                     BUILD_EXTENSIONS = False
 # Chaquopy (Android Python) cannot compile native code
 if "CHAQUOPY_ABI" in os.environ:        BUILD_EXTENSIONS = False
+# Also detect chaquopy_monkey module which is loaded during pip install
+try:
+    import chaquopy_monkey
+    BUILD_EXTENSIONS = False
+except ImportError:
+    pass
 
 if BUILD_EXTENSIONS: print(f"Building LXST with native extensions...")
 else: print(f"Building LXST without native extensions...")
