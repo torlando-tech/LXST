@@ -7,6 +7,8 @@ import platform
 if os.path.isfile("./skip_extensions"): BUILD_EXTENSIONS = False
 else:                                   BUILD_EXTENSIONS = True
 if os.name == "nt":                     BUILD_EXTENSIONS = False
+# Chaquopy (Android Python) cannot compile native code
+if "CHAQUOPY_ABI" in os.environ:        BUILD_EXTENSIONS = False
 
 if BUILD_EXTENSIONS: print(f"Building LXST with native extensions...")
 else: print(f"Building LXST without native extensions...")
