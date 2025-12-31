@@ -100,7 +100,18 @@ class ExternalLibrary:
             return lib
 
     @staticmethod
+    def _is_android():
+        """Check if running on Android (Chaquopy)."""
+        return hasattr(sys, 'getandroidapilevel') or 'ANDROID_ROOT' in os.environ
+
+    @staticmethod
     def load_other(name, paths = None, tests = []):
+        # On Android, try loading from the app's native library path directly
+        if ExternalLibrary._is_android():
+            lib = ExternalLibrary._load_android(name, tests)
+            if lib is not None:
+                return lib
+
         os.environ["PATH"] += ";" + ";".join((os.getcwd(), _here))
         if paths: os.environ["PATH"] += ";" + ";".join(paths)
 
@@ -114,6 +125,28 @@ class ExternalLibrary:
                         return lib
                 except:
                     pass
+
+    @staticmethod
+    def _load_android(name, tests = []):
+        """Load library on Android from the app's native library directory."""
+        # On Android, libraries in jniLibs are accessible via standard names
+        android_names = [
+            f"lib{name}.so",  # Standard Android naming
+            name,              # As-is
+            f"{name}.so",      # With .so extension
+        ]
+
+        for lib_name in android_names:
+            try:
+                lib = ctypes.CDLL(lib_name)
+                if tests and all(run_tests(lib, tests)):
+                    return lib
+                elif not tests:
+                    return lib
+            except OSError:
+                pass
+
+        return None
 
     @staticmethod
     def load_windows(name, paths = None, tests = []):
