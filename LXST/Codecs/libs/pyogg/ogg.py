@@ -76,20 +76,21 @@ if libogg is not None:
 else:
     PYOGG_OGG_AVAIL = False
 
+# ctypes pointer types - always define these so other modules (like opus) can use them
+# even if libogg is not available (e.g., on Android where only libopus is provided)
+c_ubyte_p = POINTER(c_ubyte)
+c_uchar = c_ubyte
+c_uchar_p = c_ubyte_p
+c_float_p = POINTER(c_float)
+c_float_p_p = POINTER(c_float_p)
+c_float_p_p_p = POINTER(c_float_p_p)
+c_char_p_p = POINTER(c_char_p)
+c_int_p = POINTER(c_int)
+c_long_p = POINTER(c_long)
+
 if PYOGG_OGG_AVAIL:
     # Sanity check also satisfies mypy type checking
     assert libogg is not None
-
-    # ctypes
-    c_ubyte_p = POINTER(c_ubyte)
-    c_uchar = c_ubyte
-    c_uchar_p = c_ubyte_p
-    c_float_p = POINTER(c_float)
-    c_float_p_p = POINTER(c_float_p)
-    c_float_p_p_p = POINTER(c_float_p_p)
-    c_char_p_p = POINTER(c_char_p)
-    c_int_p = POINTER(c_int)
-    c_long_p = POINTER(c_long)
 
     # os_types
     ogg_int16_t = c_int16
