@@ -128,24 +128,46 @@ class ExternalLibrary:
 
     @staticmethod
     def _load_android(name, tests = []):
-        """Load library on Android from the app's native library directory."""
-        # On Android, libraries in jniLibs are accessible via standard names
+        """Load library on Android from the app's native library directory.
+
+        On Android with Chaquopy, native libraries in jniLibs are extracted to
+        the app's native library directory and can be loaded by name.
+        We use RTLD_GLOBAL to ensure symbols are available to other libraries.
+        """
+        import sys
+        print(f"[pyogg] Android library loader: attempting to load '{name}'", file=sys.stderr, flush=True)
+
+        # Android library names to try
         android_names = [
             f"lib{name}.so",  # Standard Android naming
             name,              # As-is
             f"{name}.so",      # With .so extension
         ]
 
+        # Use RTLD_GLOBAL to make symbols available globally (needed for dependent libs)
+        # RTLD_NOW ensures all symbols are resolved immediately
+        load_flags = ctypes.RTLD_GLOBAL
+
         for lib_name in android_names:
             try:
-                lib = ctypes.CDLL(lib_name)
-                if tests and all(run_tests(lib, tests)):
+                print(f"[pyogg] Trying to load: {lib_name}", file=sys.stderr, flush=True)
+                # Try loading with RTLD_GLOBAL first
+                lib = ctypes.CDLL(lib_name, mode=load_flags)
+                print(f"[pyogg] Successfully loaded: {lib_name}", file=sys.stderr, flush=True)
+                if tests:
+                    print(f"[pyogg] Running tests on {lib_name}...", file=sys.stderr, flush=True)
+                    if all(run_tests(lib, tests)):
+                        print(f"[pyogg] Tests passed for {lib_name}", file=sys.stderr, flush=True)
+                        return lib
+                    else:
+                        print(f"[pyogg] Tests failed for {lib_name}", file=sys.stderr, flush=True)
+                else:
                     return lib
-                elif not tests:
-                    return lib
-            except OSError:
-                pass
+            except OSError as e:
+                print(f"[pyogg] Failed to load {lib_name}: {e}", file=sys.stderr, flush=True)
+                continue
 
+        print(f"[pyogg] Could not load library '{name}' on Android", file=sys.stderr, flush=True)
         return None
 
     @staticmethod
