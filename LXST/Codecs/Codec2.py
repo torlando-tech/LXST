@@ -1,18 +1,8 @@
 import time
 import math
 import struct
+import pycodec2
 import numpy as np
-
-# pycodec2 is optional - requires native compilation which doesn't work on Chaquopy/Android
-try:
-    import pycodec2
-except ImportError as e:
-    raise ImportError(
-        "pycodec2 is not available. Codec2 profiles are disabled. "
-        "On Android/Chaquopy, use Opus codec instead. "
-        f"Original error: {e}"
-    )
-
 from .Codec import Codec, CodecError, resample_bytes
 
 # TODO: Remove debug
