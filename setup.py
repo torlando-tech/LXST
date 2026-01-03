@@ -74,7 +74,7 @@ setuptools.setup(
         ]
     },
     install_requires=["rns>=1.0.4",
-                      "lxmf>=0.9.3",
+                      "lxmf>=0.9.2",  # Relaxed for Columba (uses 0.9.2 fork)
                       "numpy>=1.20",  # Relaxed for Chaquopy (has 1.26.2)
                       "pycodec2>=4.1.0",
                       "audioop-lts>=0.2.1;python_version>='3.13'",
