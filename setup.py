@@ -76,8 +76,8 @@ setuptools.setup(
     install_requires=["rns>=1.0.4",
                       "lxmf>=0.9.2",  # Relaxed for Columba (uses 0.9.2 fork)
                       "numpy>=1.20",  # Relaxed for Chaquopy (has 1.26.2)
-                      "pycodec2>=4.1.0",
-                      "audioop-lts>=0.2.1;python_version>='3.13'",
+                      # pycodec2 and audioop-lts removed - provided via pre-built Android wheels
+                      # by the consuming application (Columba) to avoid pip trying to compile them
                       "cffi>=1.12"],  # Relaxed for Chaquopy (has 1.17.1)
     python_requires=">=3.11",
 )
