@@ -104,9 +104,6 @@ class LinkSource(RemoteSource, SignallingReceiver):
         self.pipeline     = None
         self.proxy        = signalling_receiver
         self.receive_lock = threading.Lock()
-        # Default audio parameters - updated when first frame arrives
-        self.channels     = 1       # Mono by default
-        self.samplerate   = 24000   # Default to VOICE_MEDIUM profile rate
         self.link.set_packet_callback(self._packet)
 
     def _packet(self, data, packet):
@@ -126,8 +123,6 @@ class LinkSource(RemoteSource, SignallingReceiver):
                                     else: self.codec = frame_codec(); self.codec.sink = self.sink
                                     decoded_frame = self.codec.decode(frame[1:])
                                     if self.codec.channels: self.channels = self.codec.channels
-                                    if hasattr(self.codec, 'output_samplerate') and self.codec.output_samplerate:
-                                        self.samplerate = self.codec.output_samplerate
                                 else:
                                     decoded_frame = self.codec.decode(frame[1:])
 
