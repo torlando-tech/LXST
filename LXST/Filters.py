@@ -182,8 +182,8 @@ class AGC(Filter):
         self.attack_time       = attack_time
         self.release_time      = release_time
         self.hold_time         = hold_time
-        self.target_linear     = 10 ** (target_level / 10)
-        self.max_gain_linear   = 10 ** (max_gain / 10)
+        self.target_linear     = 10 ** (target_level / 20)  # Amplitude dB, not power dB
+        self.max_gain_linear   = 10 ** (max_gain / 20)     # Amplitude dB, not power dB
         self._samplerate       = None
         self._channels         = None
         self._current_gain_lin = 1.0
